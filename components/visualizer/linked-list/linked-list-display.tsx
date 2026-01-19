@@ -1,257 +1,221 @@
 "use client"
 
+import dynamic from "next/dynamic"
 import { Card } from "@/components/ui/card"
 import { LinkedList } from "./types"
-import { motion, AnimatePresence } from "framer-motion"
-import { ArrowRight, ArrowLeft } from "lucide-react"
+import { useTranslation } from "react-i18next"
+
+const BaseScene3D = dynamic(
+	() => import("../shared/base-scene-3d").then(mod => ({ default: mod.BaseScene3D })),
+	{ ssr: false }
+)
+
+const LinkedListNode3D = dynamic(
+	() => import("./linked-list-node-3d").then(mod => ({ default: mod.LinkedListNode3D })),
+	{ ssr: false }
+)
+
+const LinkedListLink3D = dynamic(
+	() => import("./linked-list-link-3d").then(mod => ({ default: mod.LinkedListLink3D })),
+	{ ssr: false }
+)
+
+const Text3D = dynamic(
+	() => import("@react-three/drei").then(mod => ({ default: mod.Text })),
+	{ ssr: false }
+)
+
+const Float = dynamic(
+	() => import("@react-three/drei").then(mod => ({ default: mod.Float })),
+	{ ssr: false }
+)
 
 interface LinkedListDisplayProps {
-  list: LinkedList
-  highlightedNodes: string[]
-  message: string
-  format?: (value: string) => React.ReactNode
-}
-
-interface Pointer {
-  name: string
-  nodeId: string | null
-  color: string
-}
-
-interface ListNodeProps {
-  id: string
-  value: string
-  isHighlighted: boolean
-  showPrevArrow: boolean
-  format?: (value: string) => React.ReactNode
-}
-
-function ListNode({ 
-  id, 
-  value, 
-  isHighlighted,
-  showPrevArrow,
-  format,
-}: ListNodeProps) {
-  const displayValue = format ? format(value) : value.toString()
-  
-  return (
-    <motion.div
-      layout
-      data-id={id}
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ 
-        opacity: 1, 
-        scale: 1,
-        backgroundColor: isHighlighted 
-          ? 'hsl(var(--primary))' 
-          : 'hsl(var(--muted))',
-      }}
-      exit={{ opacity: 0, scale: 0.8 }}
-      className="relative flex-shrink-0 w-16 h-16 rounded-lg flex items-center justify-center border border-border"
-    >
-      {showPrevArrow && (
-        <motion.div 
-          className="absolute -left-12 top-[60%] w-12 flex items-center justify-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
-          <div className="relative w-full">
-            <div className="h-[2px] w-full bg-muted-foreground" />
-            <ArrowLeft className="h-4 w-4 text-muted-foreground absolute left-0 -translate-x-[2px] top-1/2 -translate-y-1/2" />
-          </div>
-        </motion.div>
-      )}
-      <span className={`text-lg font-mono ${
-        isHighlighted ? 'text-primary-foreground' : ''
-      }`}>
-        {displayValue}
-      </span>
-    </motion.div>
-  )
-}
-
-function NextArrow({ isHighlighted, isCurved = false }: { isHighlighted: boolean, isCurved?: boolean }) {
-  if (isCurved) {
-    return (
-      <motion.div 
-        className="flex-shrink-0 flex flex-col items-center"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-      >
-        <div className={`h-16 w-[2px] ${
-          isHighlighted ? 'bg-primary' : 'bg-muted-foreground'
-        }`} />
-        <div className="relative w-32 h-8">
-          <div className={`absolute inset-0 border-t-2 border-r-2 rounded-tr-2xl ${
-            isHighlighted ? 'border-primary' : 'border-muted-foreground'
-          }`} />
-          <ArrowRight className={`h-4 w-4 absolute right-0 translate-x-[2px] top-1/2 -translate-y-1/2 ${
-            isHighlighted ? 'text-primary' : 'text-muted-foreground'
-          }`} />
-        </div>
-      </motion.div>
-    )
-  }
-
-  return (
-    <motion.div 
-      className="flex-shrink-0 w-12 flex items-center justify-center"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <div className="relative w-full -translate-y-2">
-        <div className={`h-[2px] w-full ${
-          isHighlighted ? 'bg-primary' : 'bg-muted-foreground'
-        }`} />
-        <ArrowRight className={`h-4 w-4 absolute right-0 translate-x-[2px] top-1/2 -translate-y-1/2 ${
-          isHighlighted ? 'text-primary' : 'text-muted-foreground'
-        }`} />
-      </div>
-    </motion.div>
-  )
-}
-
-function PointerLabel({ name, position, color }: { 
-  name: string
-  position: { x: number; y: number }
-  color: string 
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 10 }}
-      className="absolute pointer-events-none"
-      style={{ 
-        left: position.x,
-        top: position.y,
-        color: color
-      }}
-    >
-      <div className="flex flex-col items-center">
-        <div className="text-sm font-mono">{name}</div>
-        <div className="h-6 w-[2px]" style={{ backgroundColor: color }} />
-      </div>
-    </motion.div>
-  )
+	list: LinkedList
+	highlightedNodes: string[]
+	message: string
+	format?: (value: string) => React.ReactNode
 }
 
 export function LinkedListDisplay({ 
-  list, 
-  highlightedNodes, 
-  message,
-  pointers = [],
-  format,
-}: LinkedListDisplayProps & { pointers?: Pointer[] }) {
+	list, 
+	highlightedNodes, 
+	message,
+}: LinkedListDisplayProps) {
+	const { t } = useTranslation()
 
-  const getNodeChain = () => {
-    const chain: string[] = []
-    let current = list.head
-    const visited = new Set<string>()
+	const getNodeChain = () => {
+		const chain: string[] = []
+		let current = list.head
+		const visited = new Set<string>()
 
-    while (current) {
-      const node = list.nodes.get(current)
-      if (!node) break
-      
-      chain.push(current)
-      visited.add(current)
-      
-      if (node.next && visited.has(node.next)) {
-        break
-      }
-      
-      current = node.next
-    }
+		while (current) {
+			const node = list.nodes.get(current)
+			if (!node) break
+			
+			chain.push(current)
+			visited.add(current)
+			
+			if (node.next && visited.has(node.next)) {
+				break
+			}
+			
+			current = node.next
+		}
 
-    return chain
-  }
+		return chain
+	}
 
-  const nodeChain = getNodeChain()
-  const isCircular = list.type === 'CSLL' || list.type === 'CDLL'
-  const isDoubly = list.type === 'DLL' || list.type === 'CDLL'
+	const nodeChain = getNodeChain()
+	
+	// Escalado dinámico
+	const maxVisibleWidth = 20
+	const defaultSpacing = 3.5
+	const nodeSpacing = nodeChain.length > 6 
+		? Math.max(2.2, maxVisibleWidth / nodeChain.length) 
+		: defaultSpacing
+	
+	// Escala de nodos basada en cantidad
+	const nodeScale = nodeChain.length > 6 
+		? Math.max(0.6, 1 - (nodeChain.length - 6) * 0.04) 
+		: 1
 
-  const getNodePosition = (nodeId: string): { x: number; y: number } | null => {
-    const element = document.querySelector(`[data-id="${nodeId}"]`)
-    if (!element) return null
-    const rect = element.getBoundingClientRect()
-    const container = document.querySelector('.list-container')
-    if (!container) return null
-    const containerRect = container.getBoundingClientRect()
-    return {
-      x: rect.left - containerRect.left + rect.width / 2,
-      y: rect.top - containerRect.top - 40
-    }
-  }
+	// Cálculo del ancho total
+	const totalWidth = (nodeChain.length - 1) * nodeSpacing
+	const offsetX = -totalWidth / 2
 
-  return (
-    <Card className="p-6 relative">
-      {message && (
-        <div className="absolute top-4 left-4 text-sm text-muted-foreground">
-          {message}
-        </div>
-      )}
+	// Ajuste de cámara dinámico
+	const cameraZ = Math.max(12, 10 + nodeChain.length * 0.5)
+	const cameraY = nodeChain.length > 8 ? 4 : 3
 
-      <div className="mt-12 flex items-center justify-center">
-        <div className="list-container relative">
-          <AnimatePresence>
-            {pointers.map(pointer => 
-              pointer.nodeId && (
-                <PointerLabel
-                  key={pointer.name}
-                  name={pointer.name}
-                  color={pointer.color}
-                  position={getNodePosition(pointer.nodeId) || { x: 0, y: 0 }}
-                />
-              )
-            )}
-          </AnimatePresence>
+	// Tamaño de la plataforma
+	const platformWidth = Math.max(totalWidth + 6, 10)
 
-          <div className="flex flex-wrap gap-0 items-center">
-            <AnimatePresence mode="popLayout">
-              {nodeChain.map((nodeId, index) => (
-                <div key={nodeId} className="flex items-center">
-                  <ListNode
-                    id={nodeId}
-                    value={list.nodes.get(nodeId)!.value}
-                    isHighlighted={highlightedNodes.includes(nodeId)}
-                    showPrevArrow={isDoubly && index > 0}
-                    format={format}
-                  />
-                  {index < nodeChain.length - 1 && (
-                    <NextArrow 
-                      isHighlighted={
-                        highlightedNodes.includes(nodeId) && 
-                        highlightedNodes.includes(nodeChain[index + 1])
-                      }
-                    />
-                  )}
-                </div>
-              ))}
-            </AnimatePresence>
-          </div>
-        </div>
-      </div>
+	return (
+		<Card className="p-0 relative h-[600px] overflow-hidden border-2 border-primary/10 rounded-xl shadow-xl bg-gradient-to-b from-card via-card to-secondary/10">
+			{message && (
+				<div className="absolute top-4 left-4 z-10 text-sm font-medium bg-background/90 backdrop-blur-sm px-4 py-2 rounded-full border shadow-lg">
+					{message}
+				</div>
+			)}
 
-      {isCircular && list.head && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
-          <div className="flex flex-col items-center">
-            <NextArrow 
-              isHighlighted={
-                highlightedNodes.includes(list.tail!) && 
-                highlightedNodes.includes(list.head)
-              }
-              isCurved
-            />
-            <span className="text-xs text-muted-foreground mt-2">
-              Circular Connection
-            </span>
-          </div>
-        </div>
-      )}
-    </Card>
-  )
-} 
+			<BaseScene3D showSparkles={nodeChain.length > 0} cameraPosition={[0, cameraY, cameraZ]}>
+				{/* Plataforma base */}
+				<mesh position={[0, -2, 0]} receiveShadow>
+					<boxGeometry args={[platformWidth, 0.2, 6]} />
+					<meshStandardMaterial color="#1e1b4b" roughness={0.1} metalness={0.9} />
+				</mesh>
+
+				{/* Bordes luminosos */}
+				<mesh position={[0, -1.88, 3.05]}>
+					<boxGeometry args={[platformWidth, 0.05, 0.08]} />
+					<meshStandardMaterial color="#4f46e5" emissive="#4f46e5" emissiveIntensity={0.4} />
+				</mesh>
+				<mesh position={[0, -1.88, -3.05]}>
+					<boxGeometry args={[platformWidth, 0.05, 0.08]} />
+					<meshStandardMaterial color="#4f46e5" emissive="#4f46e5" emissiveIntensity={0.4} />
+				</mesh>
+
+				{nodeChain.length === 0 && (
+					<Float speed={1.5} rotationIntensity={0.1} floatIntensity={0.3}>
+						<group position={[0, 0.5, 0]}>
+							<Text3D
+								position={[0, 0.3, 0]}
+								fontSize={0.5}
+								color="#6b7280"
+								anchorX="center"
+								anchorY="middle"
+							>
+								{t('visualizer.listEmpty')}
+							</Text3D>
+							<Text3D
+								position={[0, -0.3, 0]}
+								fontSize={0.3}
+								color="#4b5563"
+								anchorX="center"
+								anchorY="middle"
+							>
+								{t('visualizer.listEmptyHint')}
+							</Text3D>
+						</group>
+					</Float>
+				)}
+
+				{nodeChain.map((nodeId, index) => {
+					const node = list.nodes.get(nodeId)!
+					const position: [number, number, number] = [offsetX + index * nodeSpacing, 0, 0]
+					const isHead = index === 0
+					const isTail = index === nodeChain.length - 1
+					const nextPosition: [number, number, number] = [offsetX + (index + 1) * nodeSpacing, 0, 0]
+					
+					return (
+						<group key={nodeId}>
+							<LinkedListNode3D
+								value={node.value}
+								position={position}
+								isHighlighted={highlightedNodes.includes(nodeId)}
+								isHead={isHead}
+								isTail={isTail}
+								scale={nodeScale}
+							/>
+							
+							{/* Enlace al siguiente nodo */}
+							{index < nodeChain.length - 1 && (
+								<LinkedListLink3D
+									start={position}
+									end={nextPosition}
+									scale={nodeScale}
+								/>
+							)}
+
+							{/* Etiqueta HEAD */}
+							{isHead && (
+								<Float speed={2} rotationIntensity={0} floatIntensity={0.4}>
+									<Text3D
+										position={[position[0], 2.2 * nodeScale, 0]}
+										fontSize={0.4 * nodeScale}
+										color="#22c55e"
+										anchorX="center"
+										anchorY="middle"
+									>
+									{t('visualizer.headLabel')}
+									</Text3D>
+								</Float>
+							)}
+
+							{/* Etiqueta TAIL */}
+							{isTail && !isHead && (
+								<Float speed={2} rotationIntensity={0} floatIntensity={0.4}>
+									<Text3D
+										position={[position[0], 2.2 * nodeScale, 0]}
+										fontSize={0.4 * nodeScale}
+										color="#f59e0b"
+										anchorX="center"
+										anchorY="middle"
+									>
+									{t('visualizer.tailLabel')}
+									</Text3D>
+								</Float>
+							)}
+						</group>
+					)
+				})}
+
+				{/* Contador de nodos */}
+				{nodeChain.length > 0 && (
+					<Float speed={1} floatIntensity={0.1}>
+						<Text3D
+							position={[0, -3, 2]}
+							fontSize={0.35}
+							color="#9ca3af"
+							anchorX="center"
+							anchorY="middle"
+						>
+						{`${t('common.size')}: ${nodeChain.length}`}
+						</Text3D>
+					</Float>
+				)}
+			</BaseScene3D>
+		</Card>
+	)
+}

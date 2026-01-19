@@ -1,11 +1,19 @@
 "use client"
 
+import dynamic from "next/dynamic"
 import { AVLTreeControls } from "@/components/visualizer/avl-tree/avl-tree-controls"
-import { AVLTreeDisplay } from "@/components/visualizer/avl-tree/avl-tree-display"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { MarkdownContent } from "@/components/shared/markdown-content"
 import { useAVLTree } from "@/hooks/use-avl-tree"
 import { AVLTreeAnalysis } from "./avl-tree-analysis"
+import { Skeleton } from "@/components/ui/skeleton"
+import { useTranslation } from "react-i18next"
+import { InteractiveExplanation } from "@/components/visualizer/shared/interactive-explanation"
+import { AVL_TREE_EXPLANATION_DATA } from "@/components/visualizer/shared/explanation-data"
+
+const AVLTreeDisplay = dynamic(
+  () => import("@/components/visualizer/avl-tree/avl-tree-display").then(mod => ({ default: mod.AVLTreeDisplay })),
+  { ssr: false, loading: () => <Skeleton className="h-[500px] w-full rounded-xl" /> }
+)
 
 interface AVLTreeVisualizerProps {
   content: React.ReactNode
@@ -39,20 +47,22 @@ export function AVLTreeVisualizer({ content }: AVLTreeVisualizerProps) {
     }
   }
 
+  const { t } = useTranslation()
+
   return (
     <div className="container mx-auto">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">AVL Tree</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t('common.avlTree')}</h1>
         <p className="text-muted-foreground">
-          A self-balancing binary search tree where the heights of the two child subtrees of any node differ by at most one.
+          {t('avlTree.description')}
         </p>
       </div>
 
       <Tabs defaultValue="visualization" className="w-full space-y-6">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="visualization">Visualization</TabsTrigger>
-          <TabsTrigger value="analysis">Analysis</TabsTrigger>
-          <TabsTrigger value="explanation">Explanation</TabsTrigger>
+          <TabsTrigger value="visualization">{t('common.visualization')}</TabsTrigger>
+          <TabsTrigger value="analysis">{t('common.analysis')}</TabsTrigger>
+          <TabsTrigger value="explanation">{t('common.explanation')}</TabsTrigger>
         </TabsList>
         
         <TabsContent value="visualization" className="space-y-6">
@@ -80,8 +90,8 @@ export function AVLTreeVisualizer({ content }: AVLTreeVisualizerProps) {
           <AVLTreeAnalysis tree={tree} />
         </TabsContent>
         
-        <TabsContent value="explanation" className="prose prose-invert max-w-none">
-          <MarkdownContent content={content} />
+        <TabsContent value="explanation">
+          <InteractiveExplanation data={AVL_TREE_EXPLANATION_DATA} />
         </TabsContent>
       </Tabs>
     </div>

@@ -4,6 +4,7 @@ import { AVLTreeNode } from "./types"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 interface TreeAnalysis {
   nodeCount: number
@@ -86,6 +87,7 @@ function analyzeAVLTree(tree: AVLTreeNode | null): TreeAnalysis {
 }
 
 export function AVLTreeAnalysis({ tree }: { tree: AVLTreeNode | null }) {
+  const { t } = useTranslation()
   const analysis = analyzeAVLTree(tree)
 
   if (!tree) {
@@ -93,7 +95,7 @@ export function AVLTreeAnalysis({ tree }: { tree: AVLTreeNode | null }) {
       <Alert>
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>
-          No tree data available. Insert some nodes to see the analysis.
+          {t('analysis.noData')}
         </AlertDescription>
       </Alert>
     )
@@ -103,24 +105,24 @@ export function AVLTreeAnalysis({ tree }: { tree: AVLTreeNode | null }) {
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       <Card>
         <CardHeader>
-          <CardTitle>Basic Properties</CardTitle>
-          <CardDescription>Core tree characteristics</CardDescription>
+          <CardTitle>{t('analysis.basicProperties')}</CardTitle>
+          <CardDescription>{t('analysis.coreCharacteristics')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
           <div className="flex justify-between">
-            <span>Total Nodes:</span>
+            <span>{t('analysis.totalNodes')}:</span>
             <span className="font-mono">{analysis.nodeCount}</span>
           </div>
           <div className="flex justify-between">
-            <span>Height:</span>
+            <span>{t('analysis.height')}:</span>
             <span className="font-mono">{analysis.height}</span>
           </div>
           <div className="flex justify-between">
-            <span>Leaf Nodes:</span>
+            <span>{t('analysis.leafNodes')}:</span>
             <span className="font-mono">{analysis.leafCount}</span>
           </div>
           <div className="flex justify-between">
-            <span>Internal Nodes:</span>
+            <span>{t('analysis.internalNodes')}:</span>
             <span className="font-mono">{analysis.internalNodes}</span>
           </div>
         </CardContent>
@@ -128,24 +130,24 @@ export function AVLTreeAnalysis({ tree }: { tree: AVLTreeNode | null }) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Balance Analysis</CardTitle>
-          <CardDescription>AVL tree balance properties</CardDescription>
+          <CardTitle>{t('analysis.balanceAnalysis')}</CardTitle>
+          <CardDescription>{t('analysis.avlBalance')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
           <div className="flex justify-between">
-            <span>Is AVL Balanced:</span>
+            <span>{t('analysis.isAvlBalanced')}:</span>
             <span className={analysis.isBalanced ? "text-green-500" : "text-red-500"}>
-              {analysis.isBalanced ? "Yes" : "No"}
+              {analysis.isBalanced ? t('analysis.yes') : t('analysis.no')}
             </span>
           </div>
           <div className="flex justify-between">
-            <span>Perfectly Balanced:</span>
+            <span>{t('analysis.perfectlyBalanced')}:</span>
             <span className={analysis.perfectlyBalanced ? "text-green-500" : "text-yellow-500"}>
-              {analysis.perfectlyBalanced ? "Yes" : "No"}
+              {analysis.perfectlyBalanced ? t('analysis.yes') : t('analysis.no')}
             </span>
           </div>
           <div className="mt-4">
-            <div className="text-sm font-medium mb-2">Balance Factors:</div>
+            <div className="text-sm font-medium mb-2">{t('analysis.balanceFactors')}:</div>
             <div className="grid grid-cols-2 gap-2 text-sm">
               {Object.entries(analysis.balanceFactors).map(([node, factor]) => (
                 <div key={node} className="flex justify-between gap-2 px-2 py-1 rounded-md bg-muted">
@@ -162,16 +164,16 @@ export function AVLTreeAnalysis({ tree }: { tree: AVLTreeNode | null }) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Value Range</CardTitle>
-          <CardDescription>Tree value boundaries</CardDescription>
+          <CardTitle>{t('analysis.valueRange')}</CardTitle>
+          <CardDescription>{t('analysis.coreCharacteristics')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
           <div className="flex justify-between">
-            <span>Min Value:</span>
+            <span>{t('analysis.minValue')}:</span>
             <span className="font-mono">{analysis.minValue}</span>
           </div>
           <div className="flex justify-between">
-            <span>Max Value:</span>
+            <span>{t('analysis.maxValue')}:</span>
             <span className="font-mono">{analysis.maxValue}</span>
           </div>
         </CardContent>

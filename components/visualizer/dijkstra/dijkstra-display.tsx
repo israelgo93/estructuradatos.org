@@ -1,20 +1,27 @@
 "use client"
 
-import ReactFlow, {
-  Node,
-  Edge,
-  Background,
-  Controls,
-  useNodesState,
-  useEdgesState,
-  ConnectionLineType,
-  MarkerType,
-} from 'reactflow'
-import 'reactflow/dist/style.css'
+import dynamic from "next/dynamic"
 import { Graph } from '@/hooks/use-dijkstra'
-import { useEffect } from 'react'
-import { useTheme } from 'next-themes'
-import GraphNode from '@/components/visualizer/dijkstra/graph-node'
+
+const BaseScene3D = dynamic(
+  () => import('../shared/base-scene-3d').then(mod => ({ default: mod.BaseScene3D })),
+  { ssr: false }
+)
+
+const GraphNode3D = dynamic(
+  () => import('./graph-node-3d').then(mod => ({ default: mod.GraphNode3D })),
+  { ssr: false }
+)
+
+const LinkedListLink3D = dynamic(
+  () => import('../linked-list/linked-list-link-3d').then(mod => ({ default: mod.LinkedListLink3D })),
+  { ssr: false }
+)
+
+const Text3D = dynamic(
+  () => import('@react-three/drei').then(mod => ({ default: mod.Text })),
+  { ssr: false }
+)
 
 interface DijkstraDisplayProps {
   graph: Graph
@@ -24,17 +31,6 @@ interface DijkstraDisplayProps {
   visitedNodes: Set<string>
 }
 
-const nodeTypes = {
-  graph: GraphNode,
-}
-
-// Default edge settings
-const defaultEdgeOptions = {
-  type: 'straight',
-  animated: false,
-  style: { strokeWidth: 2 },
-}
-
 export function DijkstraDisplay({
   graph,
   distances,
@@ -42,109 +38,69 @@ export function DijkstraDisplay({
   currentNode,
   visitedNodes,
 }: DijkstraDisplayProps) {
-  const [nodes, setNodes, onNodesChange] = useNodesState([])
-  const [edges, setEdges, onEdgesChange] = useEdgesState([])
-  const { theme } = useTheme()
 
-  useEffect(() => {
-    // Convert graph nodes to ReactFlow nodes
-    const flowNodes: Node[] = graph.nodes.map(node => ({
-      id: node.id,
-      type: 'graph',
-      position: { x: node.x, y: node.y },
-      data: {
-        id: node.id,
-        distance: distances.get(node.id) || Infinity,
-        isVisited: visitedNodes.has(node.id),
-        isCurrent: node.id === currentNode,
-        isPath: path.includes(node.id),
-      },
-    }))
-
-    // Convert graph edges to ReactFlow edges
-    const flowEdges: Edge[] = graph.edges.map(edge => {
-      const isPathEdge = path.some((node, index) => {
-        const nextNode = path[index + 1]
-        return (
-          nextNode && 
-          ((edge.source === node && edge.target === nextNode) ||
-           (edge.target === node && edge.source === nextNode))
-        )
-      })
-
-      return {
-        id: `${edge.source}-${edge.target}`,
-        source: edge.source,
-        target: edge.target,
-        label: edge.weight.toString(),
-        type: 'straight',
-        animated: isPathEdge,
-        style: {
-          strokeWidth: 2,
-          stroke: isPathEdge 
-            ? '#10b981' 
-            : theme === 'dark' ? '#fff' : '#000',
-        },
-        labelStyle: {
-          fill: theme === 'dark' ? '#fff' : '#000',
-          fontWeight: '700',
-          fontSize: '14px',
-        },
-        labelBgStyle: {
-          fill: theme === 'dark' ? '#1e293b' : '#e2e8f0',
-          fillOpacity: 0.9,
-          rx: 4,
-          stroke: theme === 'dark' ? '#334155' : '#94a3b8',
-          strokeWidth: 1,
-          padding: 4,
-        },
-        labelShowBg: true,
-      }
-    })
-
-    setNodes(flowNodes)
-    setEdges(flowEdges)
-  }, [graph, distances, path, currentNode, visitedNodes, theme])
+  const getPosition = (x: number, y: number): [number, number, number] => {
+    // Scaling down for 3D coordinates
+    return [x / 50 - 5, 0, y / 50 - 5]
+  }
 
   return (
-    <div className="h-[800px] bg-background rounded-lg overflow-hidden border">
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        nodeTypes={nodeTypes}
-        defaultEdgeOptions={defaultEdgeOptions}
-        connectionLineType={ConnectionLineType.Straight}
-        fitView
-        fitViewOptions={{
-          padding: 0.2,
-          maxZoom: 1.5,
-        }}
-        minZoom={0.1}
-        maxZoom={2}
-        defaultViewport={{ x: 0, y: 0, zoom: 1 }}
-        proOptions={{ hideAttribution: true }}
-      >
-        <Background 
-          color={theme === 'dark' ? '#ffffff' : '#000000'} 
-          gap={12} 
-          size={1} 
-        />
-        <Controls 
-          position="bottom-right"
-          style={{ 
-            display: 'flex',
-            flexDirection: 'row',
-            gap: '0.5rem',
-            margin: '1rem',
-            padding: '0.5rem',
-            backgroundColor: 'rgba(255, 255, 255, 0.1)',
-            borderRadius: '0.5rem',
-            border: '1px solid rgba(255, 255, 255, 0.1)'
-          }}
-        />
-      </ReactFlow>
+    <div className="h-[600px] bg-card rounded-lg overflow-hidden">
+      <BaseScene3D>
+        {/* Edges */}
+        {graph.edges.map(edge => {
+          const sourceNode = graph.nodes.find(n => n.id === edge.source)
+          const targetNode = graph.nodes.find(n => n.id === edge.target)
+          if (!sourceNode || !targetNode) return null
+
+          const isPathEdge = path.some((node, index) => {
+            const nextNode = path[index + 1]
+            return (
+              nextNode && 
+              ((edge.source === node && edge.target === nextNode) ||
+               (edge.target === node && edge.source === nextNode))
+            )
+          })
+
+          const start = getPosition(sourceNode.x, sourceNode.y)
+          const end = getPosition(targetNode.x, targetNode.y)
+          const midpoint: [number, number, number] = [
+            (start[0] + end[0]) / 2,
+            (start[1] + end[1]) / 2 + 0.3,
+            (start[2] + end[2]) / 2
+          ]
+
+          return (
+            <group key={`${edge.source}-${edge.target}`}>
+              <LinkedListLink3D
+                start={start}
+                end={end}
+              />
+              <Text3D
+                position={midpoint}
+                fontSize={0.2}
+                color={isPathEdge ? "#22c55e" : "#94a3b8"}
+              >
+                {edge.weight}
+              </Text3D>
+            </group>
+          )
+        })}
+
+        {/* Nodes */}
+        {graph.nodes.map(node => (
+          <GraphNode3D
+            key={node.id}
+            id={node.id}
+            label={node.id}
+            position={getPosition(node.x, node.y)}
+            isVisited={visitedNodes.has(node.id)}
+            isCurrent={node.id === currentNode}
+            isPath={path.includes(node.id)}
+            distance={distances.get(node.id) || Infinity}
+          />
+        ))}
+      </BaseScene3D>
     </div>
   )
-} 
+}

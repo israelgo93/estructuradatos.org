@@ -1,76 +1,79 @@
-# Data Structure Visualizer
+# Visualizador ES
 
-An interactive web application for learning data structures through visual animations and step-by-step operations. Built with Next.js 14, TypeScript, Shadcn/ui, React Flow and Framer Motion.
+Visualizador ES (Visualizador de Estructuras de Datos) es un proyecto **open source** para aprender estructuras de datos mediante visualizaciones 3D, análisis en tiempo real y ejemplos interactivos. La interfaz funciona en español e inglés.
 
-![DS Visualizer Landing Page](./public/landing-light.png)
-![Stacks](./public/ds-st.png)
-![Queue](./public/ds-q.png)
-![Linked List](./public/ds-ll.png)
-![Polynomial](./public/ds-polynomial-multiplication.png)
-![Heap](./public/ds-heap.png)
-![Binary Tree](./public/ds-bst.png)
-![AVL Tree](./public/ds-avl.png)
-![Huffman](./public/ds-huffman.png)
-![Dijkstra](./public/ds-dijkstra.png)
+## Metodología
 
-## Features
+Metodología: aprendizaje basado en práctica con simulaciones 3D y análisis en tiempo real.
 
-### Data Structures
-- **Linked Lists**: Singly, doubly, and circular implementations
-- **Stack & Queue**: LIFO/FIFO operations with visual feedback
-- **Trees**: BST and AVL with auto-balancing visualizations
-- **Heap**: Min/max heap implementations with heapify animations
+## Características principales
 
-### Applications
-- **Infix to Postfix Conversion**: Expression conversion using stacks
-- **Message Queue System**: Producer-consumer queue simulation
-- **Polynomial Multiplication**: Using linked list representation
-- **Huffman Coding**: Encoding and decoding messages using a Huffman tree
-- **Dijkstra's Algorithm**: Finding the shortest path between nodes in a graph
+- Visualizaciones 3D interactivas para estructuras esenciales.
+- Aplicaciones educativas con escenarios reales.
+- Feedback paso a paso y análisis de complejidad.
+- Soporte bilingüe ES/EN.
+- Control por gestos con MediaPipe en la app de visión artificial.
+- Interacción con mouse (pan, rotación y zoom).
 
-## Tech Stack
+## Estructuras y aplicaciones incluidas
 
-- **Framework**: Next.js 15
-- **Language**: TypeScript
-- **Styling**: TailwindCSS
-- **Animations**: Framer Motion
-- **Graph Visualization**: React Flow
-- **UI Components**: Shadcn/ui
+### Estructuras de datos
 
-## Getting Started
+- Pila, Cola, Lista Enlazada, Árbol Binario de Búsqueda (BST), AVL, Heap.
 
-1. Clone the repository:
+### Aplicaciones
+
+- Cola de Mensajes, Multiplicación Polinomial, Algoritmo de Dijkstra, Aprendizaje con Visión Artificial.
+
+## Stack tecnológico
+
+- Next.js 15.1.2 + React 19
+- TypeScript 5
+- Three.js 0.182 / @react-three/fiber / @react-three/drei
+- @react-spring/three y framer-motion
+- MediaPipe Tasks Vision
+- i18next + react-i18next
+- TailwindCSS + shadcn/ui
+
+## Instalación
+
+1. Clonar el repositorio:
+
 ```bash
-git clone https://github.com/CubeStar1/ds-visualizer.git
-cd ds-visualizer
+git clone https://github.com/israelgo93/v-estructuradatos.git
+cd v-estructuradatos
 ```
 
-2. Install dependencies:
+1. Instalar dependencias:
+
 ```bash
 npm install
 ```
 
-3. Run the development server:
+1. Ejecutar el servidor de desarrollo:
+
 ```bash
 npm run dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
+1. Abrir [http://localhost:3000](http://localhost:3000)
 
-## Project Structure
+## Internacionalización (i18n)
 
-```
-ds-visualizer/
-├── app/                    # Next.js app router pages
-├── components/            
-│   ├── ui/                # shadcn/ui components
-│   ├── visualizer/        # Data structure visualizations
-│   ├── landing/           # Landing page components
-│   └── global/            # Global components
-├── hooks/                 # Custom React hooks
-├── lib/                  
-└── content/              # Markdown content for explanations
-```
+- Español e inglés listos de fábrica.
+- Archivos de traducción en `public/locales/`.
 
+## Contribuir
 
+Las contribuciones son bienvenidas. Abre un issue para discutir cambios mayores y envía un Pull Request con una descripción clara.
 
+## Créditos
+
+- Este es un proyecto educativo.
+- Creador: Ing. Israel J. Gomez, Mgtr.
+- Para la materia de Estructura de Datos.
+- Facultad de Ciencias de la Vida y Tecnologías - ULEAM.
+
+## Licencia
+
+MIT. Ver [LICENSE](LICENSE).

@@ -2,6 +2,7 @@
 
 import { Graph } from "@/hooks/use-dijkstra"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useTranslation } from "react-i18next"
 
 interface DijkstraAnalysisProps {
   graph: Graph
@@ -16,26 +17,27 @@ export function DijkstraAnalysis({
   path,
   visitedNodes,
 }: DijkstraAnalysisProps) {
+  const { t } = useTranslation()
   const shortestDistance = path.length > 0 ? distances.get(path[path.length - 1]) : null
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <Card>
         <CardHeader>
-          <CardTitle>Graph Structure</CardTitle>
-          <CardDescription>Basic graph metrics</CardDescription>
+          <CardTitle>{t('analysis.graphStructure')}</CardTitle>
+          <CardDescription>{t('analysis.basicGraphMetrics')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
           <div className="flex justify-between">
-            <span>Nodes:</span>
+            <span>{t('analysis.nodes')}:</span>
             <span className="font-mono">{graph.nodes.length}</span>
           </div>
           <div className="flex justify-between">
-            <span>Edges:</span>
+            <span>{t('analysis.edges')}:</span>
             <span className="font-mono">{graph.edges.length}</span>
           </div>
           <div className="flex justify-between">
-            <span>Average Degree:</span>
+            <span>{t('analysis.averageDegree')}:</span>
             <span className="font-mono">
               {graph.nodes.length > 0 
                 ? (2 * graph.edges.length / graph.nodes.length).toFixed(2)
@@ -48,22 +50,22 @@ export function DijkstraAnalysis({
 
       <Card>
         <CardHeader>
-          <CardTitle>Algorithm Progress</CardTitle>
-          <CardDescription>Current search status</CardDescription>
+          <CardTitle>{t('analysis.algorithmProgress')}</CardTitle>
+          <CardDescription>{t('analysis.currentSearchStatus')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
           <div className="flex justify-between">
-            <span>Visited Nodes:</span>
+            <span>{t('analysis.visitedNodes')}:</span>
             <span className="font-mono">{visitedNodes.size}</span>
           </div>
           <div className="flex justify-between">
-            <span>Remaining Nodes:</span>
+            <span>{t('analysis.remainingNodes')}:</span>
             <span className="font-mono">
               {graph.nodes.length - visitedNodes.size}
             </span>
           </div>
           <div className="flex justify-between">
-            <span>Progress:</span>
+            <span>{t('analysis.progress')}:</span>
             <span className="font-mono">
               {graph.nodes.length > 0
                 ? `${((visitedNodes.size / graph.nodes.length) * 100).toFixed(1)}%`
@@ -76,16 +78,16 @@ export function DijkstraAnalysis({
 
       <Card>
         <CardHeader>
-          <CardTitle>Path Analysis</CardTitle>
-          <CardDescription>Shortest path details</CardDescription>
+          <CardTitle>{t('analysis.pathAnalysis')}</CardTitle>
+          <CardDescription>{t('analysis.shortestPathDetails')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
           <div className="flex justify-between">
-            <span>Path Length:</span>
-            <span className="font-mono">{path.length - 1} edges</span>
+            <span>{t('analysis.pathLength')}:</span>
+            <span className="font-mono">{path.length - 1} {t('analysis.edgesCount')}</span>
           </div>
           <div className="flex justify-between">
-            <span>Total Distance:</span>
+            <span>{t('analysis.totalDistance')}:</span>
             <span className="font-mono">
               {shortestDistance === null || shortestDistance === Infinity 
                 ? '∞' 
@@ -94,9 +96,9 @@ export function DijkstraAnalysis({
             </span>
           </div>
           <div className="flex justify-between">
-            <span>Path:</span>
+            <span>{t('analysis.path')}:</span>
             <span className="font-mono">
-              {path.length > 0 ? path.join(' → ') : 'None'}
+              {path.length > 0 ? path.join(' → ') : t('analysis.none')}
             </span>
           </div>
         </CardContent>

@@ -1,12 +1,20 @@
 "use client"
 
+import dynamic from "next/dynamic"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { MarkdownContent } from "@/components/shared/markdown-content"
-import { LinkedListDisplay } from "@/components/visualizer/linked-list/linked-list-display"
 import { LinkedListControls } from "@/components/visualizer/linked-list/linked-list-controls"
 import { LinkedListOperations } from "@/components/visualizer/linked-list/linked-list-operations"
 import { useLinkedList } from "@/hooks/use-linked-list"
 import { ListType } from "./types"
+import { useTranslation } from "react-i18next"
+import { Skeleton } from "@/components/ui/skeleton"
+import { InteractiveExplanation } from "@/components/visualizer/shared/interactive-explanation"
+import { LINKED_LIST_EXPLANATION_DATA } from "@/components/visualizer/shared/explanation-data"
+
+const LinkedListDisplay = dynamic(
+  () => import("@/components/visualizer/linked-list/linked-list-display").then(mod => ({ default: mod.LinkedListDisplay })),
+  { ssr: false, loading: () => <Skeleton className="h-[500px] w-full rounded-xl" /> }
+)
 
 const LIST_TYPES: { value: ListType; label: string }[] = [
   { value: 'SLL', label: 'SLL' },
@@ -20,12 +28,14 @@ interface LinkedListVisualizerProps {
 }
 
 export function LinkedListVisualizer({ content }: LinkedListVisualizerProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="container mx-auto">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">Linked List</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t('common.linkedList')}</h1>
         <p className="text-muted-foreground">
-          A dynamic data structure with nodes connected through references.
+          {t('linkedList.description')}
         </p>
       </div>
 
@@ -36,7 +46,7 @@ export function LinkedListVisualizer({ content }: LinkedListVisualizerProps) {
               {type.label}
             </TabsTrigger>
           ))}
-          <TabsTrigger value="explanation">Info</TabsTrigger>
+          <TabsTrigger value="explanation">{t('common.explanation')}</TabsTrigger>
         </TabsList>
 
         {LIST_TYPES.map(type => (
@@ -45,8 +55,8 @@ export function LinkedListVisualizer({ content }: LinkedListVisualizerProps) {
           </TabsContent>
         ))}
         
-        <TabsContent value="explanation" className="prose prose-invert max-w-none">
-          <MarkdownContent content={content} />
+        <TabsContent value="explanation">
+          <InteractiveExplanation data={LINKED_LIST_EXPLANATION_DATA} />
         </TabsContent>
       </Tabs>
     </div>
@@ -89,4 +99,4 @@ function LinkedListContent({ type }: { type: ListType }) {
       </div>
     </div>
   )
-} 
+}

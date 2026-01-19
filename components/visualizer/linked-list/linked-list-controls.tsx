@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useState } from "react"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
+import { useTranslation } from "react-i18next"
 
 interface LinkedListControlsProps {
   onInsertFront: (value: number) => void
@@ -26,6 +27,7 @@ export function LinkedListControls({
   isAnimating,
   isEmpty,
 }: LinkedListControlsProps) {
+  const { t } = useTranslation()
   const [value, setValue] = useState("")
   const [insertAtFront, setInsertAtFront] = useState(true)
 
@@ -44,13 +46,13 @@ export function LinkedListControls({
   return (
     <Card className="bg-card/50 backdrop-blur-sm">
       <CardHeader>
-        <CardTitle className="text-lg">List Controls</CardTitle>
+        <CardTitle className="text-lg">{t('controls.listControls')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Insert Controls */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <Label htmlFor="insert-position">Insert at Front</Label>
+            <Label htmlFor="insert-position">{t('controls.insertAtFront')}</Label>
             <Switch
               id="insert-position"
               checked={insertAtFront}
@@ -63,7 +65,7 @@ export function LinkedListControls({
               type="number"
               value={value}
               onChange={(e) => setValue(e.target.value)}
-              placeholder="Enter value"
+              placeholder={t('controls.enterValue')}
               onKeyDown={(e) => e.key === 'Enter' && handleInsert()}
               disabled={isAnimating}
               className="flex-1"
@@ -72,7 +74,7 @@ export function LinkedListControls({
               onClick={handleInsert}
               disabled={isAnimating || !value.trim()}
             >
-              Insert
+              {t('controls.insert')}
             </Button>
           </div>
         </div>
@@ -84,14 +86,14 @@ export function LinkedListControls({
             disabled={isAnimating || isEmpty}
             variant="secondary"
           >
-            Delete Front
+            {t('controls.deleteFront')}
           </Button>
           <Button 
             onClick={onDeleteBack}
             disabled={isAnimating || isEmpty}
             variant="secondary"
           >
-            Delete Back
+            {t('controls.deleteBack')}
           </Button>
         </div>
 
@@ -102,7 +104,7 @@ export function LinkedListControls({
           className="w-full"
           variant="outline"
         >
-          Reverse List
+          {t('controls.reverseList')}
         </Button>
       </CardContent>
     </Card>

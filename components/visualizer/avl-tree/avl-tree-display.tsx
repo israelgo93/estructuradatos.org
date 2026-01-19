@@ -1,165 +1,91 @@
 "use client"
 
-import ReactFlow, {
-  Node,
-  Edge,
-  Background,
-  Controls,
-  useNodesState,
-  useEdgesState,
-  ReactFlowInstance,
-} from 'reactflow'
-import 'reactflow/dist/style.css'
+import dynamic from "next/dynamic"
 import { AVLTreeNode } from './types'
-import TreeNode from '../binary-tree/tree-node'
-import { useEffect, useCallback, useState } from 'react'
-import { useTheme } from 'next-themes'
+
+const BaseScene3D = dynamic(
+  () => import('../shared/base-scene-3d').then(mod => ({ default: mod.BaseScene3D })),
+  { ssr: false }
+)
+
+const TreeNode3D = dynamic(
+  () => import('../binary-tree/tree-node-3d').then(mod => ({ default: mod.TreeNode3D })),
+  { ssr: false }
+)
+
+const LinkedListLink3D = dynamic(
+  () => import('../linked-list/linked-list-link-3d').then(mod => ({ default: mod.LinkedListLink3D })),
+  { ssr: false }
+)
 
 interface AVLTreeDisplayProps {
   tree: AVLTreeNode | null
   highlightedNodes: string[]
 }
 
-const nodeTypes = {
-  treeNode: TreeNode,
-}
-
 export function AVLTreeDisplay({ tree, highlightedNodes }: AVLTreeDisplayProps) {
-  const [nodes, setNodes, onNodesChange] = useNodesState([])
-  const [edges, setEdges, onEdgesChange] = useEdgesState([])
-  const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null)
-  const { theme } = useTheme()
-
-  const onInit = useCallback((flowInstance: ReactFlowInstance) => {
-    setReactFlowInstance(flowInstance)
-  }, [])
-
-  const fitView = useCallback(() => {
-    if (reactFlowInstance) {
-      setTimeout(() => {
-        reactFlowInstance.fitView({
-          padding: 0.2,
-          duration: 400,
-          maxZoom: 1.5,
-        })
-      }, 50)
+  
+  const renderTree = (
+    node: AVLTreeNode,
+    x: number = 0,
+    y: number = 0,
+    level: number = 0,
+    parentPosition?: [number, number, number]
+  ): React.ReactNode[] => {
+    const nodes: React.ReactNode[] = []
+    const baseSpacing = 5
+    const spacing = Math.pow(1.5, level) * baseSpacing
+    const verticalSpacing = -2.5
+    
+    const currentPosition: [number, number, number] = [x, y, 0]
+    
+    nodes.push(
+      <TreeNode3D
+        key={node.id}
+        value={node.value}
+        position={currentPosition}
+        isHighlighted={highlightedNodes.includes(node.id)}
+      />
+    )
+    
+    if (parentPosition) {
+      nodes.push(
+        <LinkedListLink3D
+          key={`${node.id}-link`}
+          start={parentPosition}
+          end={currentPosition}
+        />
+      )
     }
-  }, [reactFlowInstance])
-
-  useEffect(() => {
-    if (!tree) {
-      setNodes([])
-      setEdges([])
-      return
+    
+    if (node.left) {
+      nodes.push(...renderTree(
+        node.left, 
+        x - spacing / Math.pow(2, level + 1), 
+        y + verticalSpacing, 
+        level + 1, 
+        currentPosition
+      ))
     }
-
-    const newNodes: Node[] = []
-    const newEdges: Edge[] = []
-
-    const processNode = (
-      node: AVLTreeNode,
-      x: number = 0,
-      y: number = 0,
-      level: number = 0,
-      parentId?: string
-    ) => {
-      const baseSpacing = 60
-      const spacing = Math.pow(1.6, level) * baseSpacing
-      const verticalSpacing = 80
-
-      newNodes.push({
-        id: node.id,
-        type: 'treeNode',
-        position: { x, y },
-        data: { 
-          id: node.id,
-          value: node.value,
-          highlighted: highlightedNodes.includes(node.id),
-          label: `h=${node.height}` // Show height for AVL tree
-        },
-      })
-
-      if (parentId) {
-        newEdges.push({
-          id: `${parentId}->${node.id}`,
-          source: parentId,
-          target: node.id,
-          type: 'default',
-          style: { 
-            stroke: theme === 'dark' ? '#ffffff' : '#000000',
-            strokeWidth: 1.5,
-            opacity: 0.5,
-          },
-          animated: highlightedNodes.includes(node.id),
-        })
-      }
-
-      if (node.left) {
-        processNode(
-          node.left, 
-          x - spacing, 
-          y + verticalSpacing, 
-          level + 1, 
-          node.id
-        )
-      }
-
-      if (node.right) {
-        processNode(
-          node.right, 
-          x + spacing, 
-          y + verticalSpacing, 
-          level + 1, 
-          node.id
-        )
-      }
+    
+    if (node.right) {
+      nodes.push(...renderTree(
+        node.right, 
+        x + spacing / Math.pow(2, level + 1), 
+        y + verticalSpacing, 
+        level + 1, 
+        currentPosition
+      ))
     }
-
-    processNode(tree)
-    setNodes(newNodes)
-    setEdges(newEdges)
-    fitView()
-  }, [tree, highlightedNodes, setNodes, setEdges, fitView, theme])
+    
+    return nodes
+  }
 
   return (
-    <div className="w-full h-[600px] bg-background rounded-lg overflow-hidden">
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onInit={onInit}
-        nodeTypes={nodeTypes}
-        fitView
-        fitViewOptions={{
-          padding: 0.2,
-          maxZoom: 1.5,
-        }}
-        minZoom={0.1}
-        maxZoom={2}
-        defaultViewport={{ x: 0, y: 0, zoom: 1 }}
-        proOptions={{ hideAttribution: true }}
-        className="transition-all duration-300"
-      >
-        <Background 
-          color={theme === 'dark' ? '#ffffff' : '#000000'} 
-          gap={12} 
-          size={1} 
-        />
-        <Controls 
-          position="bottom-right"
-          style={{ 
-            display: 'flex',
-            flexDirection: 'row',
-            gap: '0.5rem',
-            margin: '1rem',
-            padding: '0.5rem',
-            backgroundColor: 'rgba(255, 255, 255, 0.1)',
-            borderRadius: '0.5rem',
-            border: '1px solid rgba(255, 255, 255, 0.1)'
-          }}
-        />
-      </ReactFlow>
+    <div className="w-full h-[600px] bg-card rounded-lg overflow-hidden">
+      <BaseScene3D>
+        {tree && renderTree(tree)}
+      </BaseScene3D>
     </div>
   )
-} 
+}

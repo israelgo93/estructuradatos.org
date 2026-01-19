@@ -1,143 +1,91 @@
 "use client"
 
-import ReactFlow, {
-  Node,
-  Edge,
-  Background,
-  Controls,
-  useNodesState,
-  useEdgesState,
-} from 'reactflow'
-import 'reactflow/dist/style.css'
+import dynamic from "next/dynamic"
 import { HeapNode } from './types'
-import TreeNode from '../binary-tree/tree-node'
-import { useEffect } from 'react'
-import { useTheme } from 'next-themes'
+
+const BaseScene3D = dynamic(
+  () => import('../shared/base-scene-3d').then(mod => ({ default: mod.BaseScene3D })),
+  { ssr: false }
+)
+
+const TreeNode3D = dynamic(
+  () => import('../binary-tree/tree-node-3d').then(mod => ({ default: mod.TreeNode3D })),
+  { ssr: false }
+)
+
+const LinkedListLink3D = dynamic(
+  () => import('../linked-list/linked-list-link-3d').then(mod => ({ default: mod.LinkedListLink3D })),
+  { ssr: false }
+)
 
 interface HeapDisplayProps {
   heap: HeapNode | null
   highlightedNodes: string[]
 }
 
-const nodeTypes = {
-  treeNode: TreeNode,
-}
-
 export function HeapDisplay({ heap, highlightedNodes }: HeapDisplayProps) {
-  const [nodes, setNodes, onNodesChange] = useNodesState([])
-  const [edges, setEdges, onEdgesChange] = useEdgesState([])
-  const { theme } = useTheme()
-
-  useEffect(() => {
-    if (!heap) {
-      setNodes([])
-      setEdges([])
-      return
+  
+  const renderHeap = (
+    node: HeapNode,
+    x: number = 0,
+    y: number = 0,
+    level: number = 0,
+    parentPosition?: [number, number, number]
+  ): React.ReactNode[] => {
+    const nodes: React.ReactNode[] = []
+    const baseSpacing = 5
+    const spacing = Math.pow(1.5, level) * baseSpacing
+    const verticalSpacing = -2.5
+    
+    const currentPosition: [number, number, number] = [x, y, 0]
+    
+    nodes.push(
+      <TreeNode3D
+        key={node.id}
+        value={node.value}
+        position={currentPosition}
+        isHighlighted={highlightedNodes.includes(node.id)}
+      />
+    )
+    
+    if (parentPosition) {
+      nodes.push(
+        <LinkedListLink3D
+          key={`${node.id}-link`}
+          start={parentPosition}
+          end={currentPosition}
+        />
+      )
     }
-
-    const newNodes: Node[] = []
-    const newEdges: Edge[] = []
-
-    const processNode = (
-      node: HeapNode,
-      x: number = 0,
-      y: number = 0,
-      level: number = 0,
-      parentId?: string
-    ) => {
-      const baseSpacing = 60
-      const spacing = Math.pow(1.6, level) * baseSpacing
-      const verticalSpacing = 80
-
-      newNodes.push({
-        id: node.id,
-        type: 'treeNode',
-        position: { x, y },
-        data: { 
-          id: node.id,
-          value: node.value,
-          highlighted: highlightedNodes.includes(node.id),
-        },
-      })
-
-      if (parentId) {
-        newEdges.push({
-          id: `${parentId}->${node.id}`,
-          source: parentId,
-          target: node.id,
-          type: 'default',
-          style: { 
-            stroke: theme === 'dark' ? '#ffffff' : '#000000',
-            strokeWidth: 1.5,
-            opacity: 0.5,
-          },
-        })
-      }
-
-      if (node.left) {
-        processNode(
-          node.left, 
-          x - spacing, 
-          y + verticalSpacing, 
-          level + 1, 
-          node.id
-        )
-      }
-
-      if (node.right) {
-        processNode(
-          node.right, 
-          x + spacing, 
-          y + verticalSpacing, 
-          level + 1, 
-          node.id
-        )
-      }
+    
+    if (node.left) {
+      nodes.push(...renderHeap(
+        node.left, 
+        x - spacing / Math.pow(2, level + 1), 
+        y + verticalSpacing, 
+        level + 1, 
+        currentPosition
+      ))
     }
-
-    processNode(heap)
-    setNodes(newNodes)
-    setEdges(newEdges)
-  }, [heap, highlightedNodes, setNodes, setEdges, theme])
+    
+    if (node.right) {
+      nodes.push(...renderHeap(
+        node.right, 
+        x + spacing / Math.pow(2, level + 1), 
+        y + verticalSpacing, 
+        level + 1, 
+        currentPosition
+      ))
+    }
+    
+    return nodes
+  }
 
   return (
-    <div className="w-full h-[600px] bg-background rounded-lg overflow-hidden">
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        nodeTypes={nodeTypes}
-        fitView
-        fitViewOptions={{
-          padding: 0.2,
-          maxZoom: 1.5,
-        }}
-        minZoom={0.1}
-        maxZoom={2}
-        defaultViewport={{ x: 0, y: 0, zoom: 1 }}
-        proOptions={{ hideAttribution: true }}
-      >
-        <Background 
-          color={theme === 'dark' ? '#ffffff' : '#000000'} 
-          gap={12} 
-          size={1} 
-          className="opacity-[0.02]"
-        />
-        <Controls 
-          position="bottom-right"
-          style={{ 
-            display: 'flex',
-            flexDirection: 'row',
-            gap: '0.5rem',
-            margin: '1rem',
-            padding: '0.5rem',
-            backgroundColor: 'rgba(255, 255, 255, 0.1)',
-            borderRadius: '0.5rem',
-            border: '1px solid rgba(255, 255, 255, 0.1)'
-          }}
-        />
-      </ReactFlow>
+    <div className="w-full h-[600px] bg-card rounded-lg overflow-hidden">
+      <BaseScene3D>
+        {heap && renderHeap(heap)}
+      </BaseScene3D>
     </div>
   )
-} 
+}

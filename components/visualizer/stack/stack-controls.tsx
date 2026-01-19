@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 
 interface StackControlsProps {
   onPush: (value: number) => void
@@ -22,6 +23,7 @@ export function StackControls({
   isFull,
   isEmpty,
 }: StackControlsProps) {
+  const { t } = useTranslation()
   const [value, setValue] = useState("")
 
   const handlePush = () => {
@@ -35,7 +37,7 @@ export function StackControls({
   return (
     <Card className="bg-card/50 backdrop-blur-sm">
       <CardHeader>
-        <CardTitle className="text-lg">Stack Controls</CardTitle>
+        <CardTitle className="text-lg">{t('controls.stackControls')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex gap-2">
@@ -43,7 +45,7 @@ export function StackControls({
             type="number"
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            placeholder="Enter value"
+            placeholder={t('controls.enterValue')}
             onKeyDown={(e) => e.key === 'Enter' && !isFull && handlePush()}
             disabled={isAnimating || isFull}
             className="flex-1"
@@ -52,7 +54,7 @@ export function StackControls({
             onClick={handlePush}
             disabled={isAnimating || isFull}
           >
-            Push
+            {t('controls.push')}
           </Button>
         </div>
 
@@ -62,14 +64,14 @@ export function StackControls({
             disabled={isAnimating || isEmpty}
             variant="secondary"
           >
-            Pop
+            {t('controls.pop')}
           </Button>
           <Button 
             onClick={onClear}
             disabled={isAnimating || isEmpty}
             variant="destructive"
           >
-            Clear
+            {t('controls.clear')}
           </Button>
         </div>
       </CardContent>

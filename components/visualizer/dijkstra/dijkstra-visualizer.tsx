@@ -1,17 +1,26 @@
 "use client"
 
+import dynamic from "next/dynamic"
 import { DijkstraControls } from "@/components/visualizer/dijkstra/dijkstra-controls"
-import { DijkstraDisplay } from "@/components/visualizer/dijkstra/dijkstra-display"
 import { DijkstraAnalysis } from "@/components/visualizer/dijkstra/dijkstra-analysis"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { MarkdownContent } from "@/components/shared/markdown-content"
 import { useDijkstra } from "@/hooks/use-dijkstra"
+import { useTranslation } from "react-i18next"
+import { Skeleton } from "@/components/ui/skeleton"
+import { InteractiveExplanation } from "@/components/visualizer/shared/interactive-explanation"
+import { DIJKSTRA_EXPLANATION_DATA } from "@/components/visualizer/shared/explanation-data"
+
+const DijkstraDisplay = dynamic(
+  () => import("@/components/visualizer/dijkstra/dijkstra-display").then(mod => ({ default: mod.DijkstraDisplay })),
+  { ssr: false, loading: () => <Skeleton className="h-[500px] w-full rounded-xl" /> }
+)
 
 interface DijkstraVisualizerProps {
   content: React.ReactNode
 }
 
 export function DijkstraVisualizer({ content }: DijkstraVisualizerProps) {
+  const { t } = useTranslation()
   const {
     graph,
     distances,
@@ -39,17 +48,17 @@ export function DijkstraVisualizer({ content }: DijkstraVisualizerProps) {
   return (
     <div className="container mx-auto">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">Dijkstra's Algorithm</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t('common.dijkstra')}</h1>
         <p className="text-muted-foreground">
-          Visualize how Dijkstra's algorithm finds the shortest path between nodes in a weighted graph.
+          {t('dijkstra.description')}
         </p>
       </div>
 
       <Tabs defaultValue="visualization" className="w-full space-y-6">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="visualization">Visualization</TabsTrigger>
-          <TabsTrigger value="analysis">Analysis</TabsTrigger>
-          <TabsTrigger value="explanation">Explanation</TabsTrigger>
+          <TabsTrigger value="visualization">{t('common.visualization')}</TabsTrigger>
+          <TabsTrigger value="analysis">{t('common.analysis')}</TabsTrigger>
+          <TabsTrigger value="explanation">{t('common.explanation')}</TabsTrigger>
         </TabsList>
         
         <TabsContent value="visualization" className="space-y-6">
@@ -97,10 +106,10 @@ export function DijkstraVisualizer({ content }: DijkstraVisualizerProps) {
           />
         </TabsContent>
         
-        <TabsContent value="explanation" className="prose dark:prose-invert max-w-none">
-          <MarkdownContent content={content} />
+        <TabsContent value="explanation">
+          <InteractiveExplanation data={DIJKSTRA_EXPLANATION_DATA} />
         </TabsContent>
       </Tabs>
     </div>
   )
-} 
+}

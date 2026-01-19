@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Message, Consumer } from "./types"
 import { motion, AnimatePresence } from "framer-motion"
 import { formatDistanceToNow } from "date-fns"
+import { useTranslation } from "react-i18next"
 
 interface MessageQueueDisplayProps {
   queue: Message[]
@@ -12,6 +13,7 @@ interface MessageQueueDisplayProps {
 }
 
 function MessageCard({ message }: { message: Message }) {
+	const { t } = useTranslation()
   const getStatusColor = () => {
     switch (message.status) {
       case 'pending': return 'bg-muted'
@@ -38,7 +40,7 @@ function MessageCard({ message }: { message: Message }) {
           </p>
         </div>
         <span className="text-xs font-medium capitalize">
-          {message.status}
+          {t(`messageQueue.status.${message.status}`)}
         </span>
       </div>
     </motion.div>
@@ -46,20 +48,21 @@ function MessageCard({ message }: { message: Message }) {
 }
 
 export function MessageQueueDisplay({ queue, processed, consumers }: MessageQueueDisplayProps) {
+	const { t } = useTranslation()
   const activeConsumers = consumers.filter(c => c.isProcessing).length
 
   return (
     <div className="space-y-6">
       {/* Queue Section */}
       <Card>
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <CardTitle className="text-lg">Message Queue</CardTitle>
-            <span className="text-sm text-muted-foreground">
-              {queue.length} messages waiting
-            </span>
-          </div>
-        </CardHeader>
+				<CardHeader>
+					<div className="flex justify-between items-center">
+						<CardTitle className="text-lg">{t('messageQueue.title')}</CardTitle>
+						<span className="text-sm text-muted-foreground">
+							{t('messageQueue.messagesWaiting', { count: queue.length })}
+						</span>
+					</div>
+				</CardHeader>
         <CardContent>
           <div className="space-y-2">
             <AnimatePresence mode="popLayout">
@@ -72,34 +75,38 @@ export function MessageQueueDisplay({ queue, processed, consumers }: MessageQueu
       </Card>
 
       {/* Processing Section */}
-      {activeConsumers > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Currently Processing</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {consumers.filter(c => c.isProcessing).map((consumer) => (
-                <div key={consumer.id} className="text-sm text-muted-foreground">
-                  {consumer.name} is processing...
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+			{activeConsumers > 0 && (
+				<Card>
+					<CardHeader>
+						<CardTitle className="text-lg">{t('messageQueue.currentlyProcessing')}</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<div className="space-y-2">
+							{consumers.filter(c => c.isProcessing).map((consumer) => {
+								const consumerIndex = consumers.findIndex(c => c.id === consumer.id)
+								const label = t('messageQueue.consumerLabel', { index: consumerIndex + 1 })
+								return (
+									<div key={consumer.id} className="text-sm text-muted-foreground">
+										{t('messageQueue.processingBy', { name: label })}
+									</div>
+								)
+							})}
+						</div>
+					</CardContent>
+				</Card>
+			)}
 
       {/* Processed Messages */}
-      {processed.length > 0 && (
-        <Card>
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle className="text-lg">Processed Messages</CardTitle>
-              <span className="text-sm text-muted-foreground">
-                {processed.length} completed
-              </span>
-            </div>
-          </CardHeader>
+			{processed.length > 0 && (
+				<Card>
+					<CardHeader>
+						<div className="flex justify-between items-center">
+							<CardTitle className="text-lg">{t('messageQueue.processedMessages')}</CardTitle>
+							<span className="text-sm text-muted-foreground">
+								{t('messageQueue.completed', { count: processed.length })}
+							</span>
+						</div>
+					</CardHeader>
           <CardContent>
             <div className="space-y-2">
               <AnimatePresence mode="popLayout">

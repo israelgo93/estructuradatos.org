@@ -1,47 +1,91 @@
 "use client"
 
+import dynamic from "next/dynamic"
+import { useState, useCallback } from "react"
 import { StackControls } from "@/components/visualizer/stack/stack-controls"
-import { StackDisplay } from "@/components/visualizer/stack/stack-display"
 import { StackOperations } from "@/components/visualizer/stack/stack-operations"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { MarkdownContent } from "@/components/shared/markdown-content"
 import { useStack } from "@/hooks/use-stack"
+import { useTranslation } from "react-i18next"
+import { Skeleton } from "@/components/ui/skeleton"
+import { OperationFeedback, useFeedback } from "@/components/visualizer/shared/operation-feedback"
+import { InteractiveExplanation, STACK_EXPLANATION_DATA } from "@/components/visualizer/shared/interactive-explanation"
+import { STACK_FEEDBACK_TEMPLATES } from "@/components/visualizer/shared/feedback-types"
+
+const StackDisplay = dynamic(
+  () => import("@/components/visualizer/stack/stack-display").then(mod => ({ default: mod.StackDisplay })),
+  { ssr: false, loading: () => <Skeleton className="h-[600px] w-full rounded-xl" /> }
+)
 
 interface StackVisualizerProps {
   content: React.ReactNode
 }
 
 export function StackVisualizer({ content }: StackVisualizerProps) {
+  const { t } = useTranslation()
   const { 
     stack,
     operations,
     isAnimating,
     highlightedIndex,
-    push,
-    pop,
+    push: originalPush,
+    pop: originalPop,
     clear,
     isFull,
     isEmpty,
   } = useStack()
 
+  const { currentFeedback, startFeedback, completeFeedback } = useFeedback()
+
+  // Wrap push with feedback
+  const push = useCallback(async (value: number) => {
+    const template = STACK_FEEDBACK_TEMPLATES.push
+    startFeedback({
+      operationName: template.operationName,
+      operationNameEs: template.operationNameEs,
+      steps: template.getSteps(value, stack.length + 1),
+      complexity: template.complexity
+    })
+    
+    await originalPush(value)
+    completeFeedback()
+  }, [originalPush, startFeedback, completeFeedback, stack.length])
+
+  // Wrap pop with feedback
+  const pop = useCallback(async () => {
+    if (stack.length === 0) return
+    
+    const topValue = stack[stack.length - 1].value
+    const template = STACK_FEEDBACK_TEMPLATES.pop
+    startFeedback({
+      operationName: template.operationName,
+      operationNameEs: template.operationNameEs,
+      steps: template.getSteps(topValue, stack.length - 1),
+      complexity: template.complexity
+    })
+    
+    await originalPop()
+    completeFeedback()
+  }, [originalPop, startFeedback, completeFeedback, stack])
+
   return (
     <div className="container mx-auto">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">Stack</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t('common.stack')}</h1>
         <p className="text-muted-foreground">
-          A Last-In-First-Out (LIFO) data structure with push and pop operations.
+          {t('stack.description')}
         </p>
       </div>
 
       <Tabs defaultValue="visualization" className="w-full space-y-6">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="visualization">Visualization</TabsTrigger>
-          <TabsTrigger value="explanation">Explanation</TabsTrigger>
+          <TabsTrigger value="visualization">{t('common.visualization')}</TabsTrigger>
+          <TabsTrigger value="explanation">{t('common.explanation')}</TabsTrigger>
         </TabsList>
         
         <TabsContent value="visualization" className="space-y-6">
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            <div className="xl:col-span-1 space-y-6">
+            <div className="xl:col-span-1 space-y-4">
               <StackControls 
                 onPush={push}
                 onPop={pop}
@@ -49,6 +93,10 @@ export function StackVisualizer({ content }: StackVisualizerProps) {
                 isAnimating={isAnimating}
                 isFull={isFull}
                 isEmpty={isEmpty}
+              />
+              <OperationFeedback 
+                feedback={currentFeedback}
+                isAnimating={isAnimating}
               />
               <StackOperations operations={operations} />
             </div>
@@ -61,10 +109,10 @@ export function StackVisualizer({ content }: StackVisualizerProps) {
           </div>
         </TabsContent>
         
-        <TabsContent value="explanation" className="prose prose-invert max-w-none">
-          <MarkdownContent content={content} />
+        <TabsContent value="explanation">
+          <InteractiveExplanation data={STACK_EXPLANATION_DATA} />
         </TabsContent>
       </Tabs>
     </div>
   )
-} 
+}

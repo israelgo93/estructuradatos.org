@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 
 interface AVLTreeControlsProps {
   onInsert: (value: number) => void
@@ -22,6 +23,7 @@ export function AVLTreeControls({
   rotationHistory,
   isAnimating
 }: AVLTreeControlsProps) {
+  const { t } = useTranslation()
   const [value, setValue] = useState("")
 
   const handleInsert = () => {
@@ -36,7 +38,7 @@ export function AVLTreeControls({
     <div className="space-y-4">
       <Card className="bg-card/50 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-lg">Insert Node</CardTitle>
+          <CardTitle className="text-lg">{t('controls.insertNode')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex gap-2">
@@ -44,18 +46,18 @@ export function AVLTreeControls({
               type="number"
               value={value}
               onChange={(e) => setValue(e.target.value)}
-              placeholder="Enter value"
+              placeholder={t('controls.enterValue')}
               onKeyDown={(e) => e.key === 'Enter' && handleInsert()}
               className="flex-1"
             />
-            <Button onClick={handleInsert}>Insert</Button>
+            <Button onClick={handleInsert}>{t('controls.insert')}</Button>
           </div>
         </CardContent>
       </Card>
 
       <Card className="bg-card/50 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-lg">Traversal Controls</CardTitle>
+          <CardTitle className="text-lg">{t('controls.traversalControls')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -65,7 +67,7 @@ export function AVLTreeControls({
               variant="secondary"
               className="w-full"
             >
-              In-Order
+              {t('controls.inOrder')}
             </Button>
             <Button 
               onClick={() => onTraversal("preorder")} 
@@ -73,7 +75,7 @@ export function AVLTreeControls({
               variant="secondary"
               className="w-full"
             >
-              Pre-Order
+              {t('controls.preOrder')}
             </Button>
             <Button 
               onClick={() => onTraversal("postorder")} 
@@ -81,14 +83,14 @@ export function AVLTreeControls({
               variant="secondary"
               className="w-full"
             >
-              Post-Order
+              {t('controls.postOrder')}
             </Button>
             <Button 
               variant="destructive" 
               onClick={onClear}
               className="w-full"
             >
-              Clear
+              {t('controls.clear')}
             </Button>
           </div>
         </CardContent>
@@ -97,7 +99,7 @@ export function AVLTreeControls({
       {traversalHistory.length > 0 && (
         <Card className="bg-card/50 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="text-lg">Traversal History</CardTitle>
+            <CardTitle className="text-lg">{t('controls.traversalHistory')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">
@@ -118,7 +120,7 @@ export function AVLTreeControls({
       {rotationHistory.length > 0 && (
         <Card className="bg-card/50 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="text-lg">Rotation History</CardTitle>
+            <CardTitle className="text-lg">{t('controls.rotationHistory')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col gap-2">

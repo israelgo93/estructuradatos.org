@@ -4,6 +4,7 @@ import { BinaryTreeNode } from "./types"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 interface TreeAnalysis {
   nodeCount: number
@@ -96,6 +97,7 @@ function analyzeTree(tree: BinaryTreeNode | null): TreeAnalysis {
 }
 
 export function BinaryTreeAnalysis({ tree }: { tree: BinaryTreeNode | null }) {
+  const { t } = useTranslation()
   const analysis = analyzeTree(tree)
 
   if (!tree) {
@@ -103,7 +105,7 @@ export function BinaryTreeAnalysis({ tree }: { tree: BinaryTreeNode | null }) {
       <Alert>
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>
-          No tree data available. Insert some nodes to see the analysis.
+          {t('analysis.noData')}
         </AlertDescription>
       </Alert>
     )
@@ -113,20 +115,20 @@ export function BinaryTreeAnalysis({ tree }: { tree: BinaryTreeNode | null }) {
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       <Card>
         <CardHeader>
-          <CardTitle>Basic Properties</CardTitle>
-          <CardDescription>Core tree characteristics</CardDescription>
+          <CardTitle>{t('analysis.basicProperties')}</CardTitle>
+          <CardDescription>{t('analysis.coreCharacteristics')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
           <div className="flex justify-between">
-            <span>Total Nodes:</span>
+            <span>{t('analysis.totalNodes')}:</span>
             <span className="font-mono">{analysis.nodeCount}</span>
           </div>
           <div className="flex justify-between">
-            <span>Height:</span>
+            <span>{t('analysis.height')}:</span>
             <span className="font-mono">{analysis.height}</span>
           </div>
           <div className="flex justify-between">
-            <span>Leaf Nodes:</span>
+            <span>{t('analysis.leafNodes')}:</span>
             <span className="font-mono">{analysis.leafCount}</span>
           </div>
         </CardContent>
@@ -134,22 +136,22 @@ export function BinaryTreeAnalysis({ tree }: { tree: BinaryTreeNode | null }) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Structure Analysis</CardTitle>
-          <CardDescription>Tree organization details</CardDescription>
+          <CardTitle>{t('analysis.structureAnalysis')}</CardTitle>
+          <CardDescription>{t('analysis.treeOrganization')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
           <div className="flex justify-between">
-            <span>Internal Nodes:</span>
+            <span>{t('analysis.internalNodes')}:</span>
             <span className="font-mono">{analysis.internalNodes}</span>
           </div>
           <div className="flex justify-between">
-            <span>Full Nodes:</span>
+            <span>{t('analysis.fullNodes')}:</span>
             <span className="font-mono">{analysis.fullNodes}</span>
           </div>
           <div className="flex justify-between">
-            <span>Is Balanced:</span>
+            <span>{t('analysis.isBalanced')}:</span>
             <span className={analysis.isBalanced ? "text-green-500" : "text-red-500"}>
-              {analysis.isBalanced ? "Yes" : "No"}
+              {analysis.isBalanced ? t('analysis.yes') : t('analysis.no')}
             </span>
           </div>
         </CardContent>
@@ -157,22 +159,22 @@ export function BinaryTreeAnalysis({ tree }: { tree: BinaryTreeNode | null }) {
 
       <Card>
         <CardHeader>
-          <CardTitle>BST Properties</CardTitle>
-          <CardDescription>Binary Search Tree validation</CardDescription>
+          <CardTitle>{t('analysis.bstProperties')}</CardTitle>
+          <CardDescription>{t('analysis.bstValidation')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
           <div className="flex justify-between">
-            <span>Is Valid BST:</span>
+            <span>{t('analysis.isValidBST')}:</span>
             <span className={analysis.isBST ? "text-green-500" : "text-red-500"}>
-              {analysis.isBST ? "Yes" : "No"}
+              {analysis.isBST ? t('analysis.yes') : t('analysis.no')}
             </span>
           </div>
           <div className="flex justify-between">
-            <span>Min Value:</span>
+            <span>{t('analysis.minValue')}:</span>
             <span className="font-mono">{analysis.minValue}</span>
           </div>
           <div className="flex justify-between">
-            <span>Max Value:</span>
+            <span>{t('analysis.maxValue')}:</span>
             <span className="font-mono">{analysis.maxValue}</span>
           </div>
         </CardContent>

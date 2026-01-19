@@ -10,6 +10,7 @@ import { useState } from "react"
 import { Node } from "@/hooks/use-dijkstra"
 import { exampleGraphs } from "./example-graphs"
 import { Play, Pause } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 interface DijkstraControlsProps {
   onAddNode: (x: number, y: number) => void
@@ -52,6 +53,7 @@ export function DijkstraControls({
   onAutoPlay,
   isAutoPlaying,
 }: DijkstraControlsProps) {
+  const { t } = useTranslation()
   const [sourceNode, setSourceNode] = useState("")
   const [targetNode, setTargetNode] = useState("")
   const [weight, setWeight] = useState("")
@@ -75,27 +77,27 @@ export function DijkstraControls({
   return (
     <Card className="w-full h-[800px] overflow-y-auto">
       <CardHeader>
-        <CardTitle>Controls</CardTitle>
-        <CardDescription>Configure and run the algorithm</CardDescription>
+        <CardTitle>{t('controls.buildGraph')}</CardTitle>
+        <CardDescription>{t('controls.configureRun')}</CardDescription>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="build" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-4">
-            <TabsTrigger value="build">Build Graph</TabsTrigger>
-            <TabsTrigger value="algorithm">Algorithm</TabsTrigger>
+            <TabsTrigger value="build">{t('controls.buildGraph')}</TabsTrigger>
+            <TabsTrigger value="algorithm">{t('controls.algorithm')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="build" className="space-y-4">
             <div className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm">Example Graphs</CardTitle>
-                  <CardDescription>Load a predefined graph</CardDescription>
+                  <CardTitle className="text-sm">{t('controls.exampleGraphs')}</CardTitle>
+                  <CardDescription>{t('controls.loadPredefined')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Select onValueChange={(value) => onLoadExample(Number(value))}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select an example" />
+                      <SelectValue placeholder={t('controls.selectExample')} />
                     </SelectTrigger>
                     <SelectContent>
                       {exampleGraphs.map((graph, index) => (
@@ -115,8 +117,8 @@ export function DijkstraControls({
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm">Manual Build</CardTitle>
-                  <CardDescription>Add nodes and edges</CardDescription>
+                  <CardTitle className="text-sm">{t('controls.manualBuild')}</CardTitle>
+                  <CardDescription>{t('controls.addNodesEdges')}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
@@ -124,7 +126,7 @@ export function DijkstraControls({
                       onClick={() => onAddNode(Math.random() * 500, Math.random() * 300)}
                       className="w-full"
                     >
-                      Add Random Node
+                      {t('controls.addRandomNode')}
                     </Button>
                   </div>
 
@@ -133,23 +135,23 @@ export function DijkstraControls({
                       <Input
                         value={sourceNode}
                         onChange={(e) => setSourceNode(e.target.value)}
-                        placeholder="Source node ID"
+                        placeholder={t('controls.sourceNodeId')}
                       />
                       <Input
                         value={targetNode}
                         onChange={(e) => setTargetNode(e.target.value)}
-                        placeholder="Target node ID"
+                        placeholder={t('controls.targetNodeId')}
                       />
                     </div>
                     <div className="flex gap-2">
                       <Input
                         value={weight}
                         onChange={(e) => setWeight(e.target.value)}
-                        placeholder="Edge weight"
+                        placeholder={t('controls.edgeWeight')}
                         type="number"
                         className="flex-1"
                       />
-                      <Button onClick={handleAddEdge}>Add Edge</Button>
+                      <Button onClick={handleAddEdge}>{t('controls.addEdge')}</Button>
                     </div>
                   </div>
                 </CardContent>
@@ -160,26 +162,26 @@ export function DijkstraControls({
           <TabsContent value="algorithm" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm">Find Shortest Path</CardTitle>
-                <CardDescription>Set start/end nodes and find path</CardDescription>
+                <CardTitle className="text-sm">{t('controls.findShortestPath')}</CardTitle>
+                <CardDescription>{t('controls.pathDetails')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="text-sm font-medium mb-2 block">Start Node</label>
+                    <label className="text-sm font-medium mb-2 block">{t('controls.startNode')}</label>
                     <Input
                       key="start-node"
                       defaultValue={startNodeId ?? ""}
-                      placeholder="Node ID"
+                      placeholder={t('controls.nodeId')}
                       onChange={(e) => onSetStartNode(e.target.value)}
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium mb-2 block">End Node</label>
+                    <label className="text-sm font-medium mb-2 block">{t('controls.endNode')}</label>
                     <Input
                       key="end-node"
                       defaultValue={endNodeId ?? ""}
-                      placeholder="Node ID"
+                      placeholder={t('controls.nodeId')}
                       onChange={(e) => onSetEndNode(e.target.value)}
                     />
                   </div>
@@ -192,7 +194,7 @@ export function DijkstraControls({
                     className="w-full"
                     variant="default"
                   >
-                    Find Shortest Path
+                    {t('controls.findShortestPath')}
                   </Button>
 
                   <div className="grid grid-cols-3 gap-2">
@@ -201,7 +203,7 @@ export function DijkstraControls({
                       disabled={currentStep <= 0 || isAnimating}
                       variant="outline"
                     >
-                      Previous
+                      {t('controls.previous')}
                     </Button>
                     <Button
                       onClick={onAutoPlay}
@@ -215,7 +217,7 @@ export function DijkstraControls({
                       disabled={currentStep >= totalSteps - 1 || isAnimating}
                       variant="outline"
                     >
-                      Next
+                      {t('controls.next')}
                     </Button>
                   </div>
                 </div>
@@ -224,21 +226,21 @@ export function DijkstraControls({
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm">Current Path</CardTitle>
-                <CardDescription>Path details and distance</CardDescription>
+                <CardTitle className="text-sm">{t('controls.currentPath')}</CardTitle>
+                <CardDescription>{t('controls.pathDetails')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {path.length > 0 ? (
                   <>
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm font-medium">Path:</span>
+                        <span className="text-sm font-medium">{t('controls.path')}:</span>
                         <span className="font-mono text-sm">
                           {path.join(" → ")}
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm font-medium">Total Distance:</span>
+                        <span className="text-sm font-medium">{t('controls.totalDistance')}:</span>
                         <span className="font-mono text-sm">
                           {getTotalDistance() === Infinity ? "∞" : getTotalDistance()}
                         </span>
@@ -246,14 +248,14 @@ export function DijkstraControls({
                     </div>
                     <div className="text-xs text-muted-foreground">
                       {path.length === 1 
-                        ? "Click 'Find Shortest Path' to start" 
-                        : `Found path with ${path.length - 1} edges`
+                        ? t('controls.clickFindPath')
+                        : t('controls.foundPathEdges', { count: path.length - 1 })
                       }
                     </div>
                   </>
                 ) : (
                   <div className="text-sm text-muted-foreground text-center">
-                    No path found yet
+                    {t('controls.noPathFound')}
                   </div>
                 )}
               </CardContent>
@@ -268,12 +270,12 @@ export function DijkstraControls({
           onClick={onClear}
           className="w-full"
         >
-          Clear Graph
+          {t('controls.clearGraph')}
         </Button>
 
         {totalSteps > 0 && (
           <div className="text-sm text-muted-foreground text-center mt-4">
-            Step {currentStep + 1} of {totalSteps}
+            {t('controls.step', { current: currentStep + 1, total: totalSteps })}
           </div>
         )}
       </CardContent>

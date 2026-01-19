@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 
 interface QueueControlsProps {
   onEnqueue: (value: number) => void
@@ -22,6 +23,7 @@ export function QueueControls({
   isFull,
   isEmpty,
 }: QueueControlsProps) {
+  const { t } = useTranslation()
   const [value, setValue] = useState("")
 
   const handleEnqueue = () => {
@@ -35,7 +37,7 @@ export function QueueControls({
   return (
     <Card className="bg-card/50 backdrop-blur-sm">
       <CardHeader>
-        <CardTitle className="text-lg">Queue Controls</CardTitle>
+        <CardTitle className="text-lg">{t('controls.queueControls')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex gap-2">
@@ -43,7 +45,7 @@ export function QueueControls({
             type="number"
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            placeholder="Enter value"
+            placeholder={t('controls.enterValue')}
             onKeyDown={(e) => e.key === 'Enter' && !isFull && handleEnqueue()}
             disabled={isAnimating || isFull}
             className="flex-1"
@@ -52,7 +54,7 @@ export function QueueControls({
             onClick={handleEnqueue}
             disabled={isAnimating || isFull}
           >
-            Enqueue
+            {t('controls.enqueue')}
           </Button>
         </div>
 
@@ -62,14 +64,14 @@ export function QueueControls({
             disabled={isAnimating || isEmpty}
             variant="secondary"
           >
-            Dequeue
+            {t('controls.dequeue')}
           </Button>
           <Button 
             onClick={onClear}
             disabled={isAnimating || isEmpty}
             variant="destructive"
           >
-            Clear
+            {t('controls.clear')}
           </Button>
         </div>
       </CardContent>
