@@ -292,11 +292,22 @@
 		"ctaButton": "Start now"
 	},
 	"footer": {
-		"educationalProject": "Educational project.",
+		"educationalProject": "Educational project",
+		"course": "Data Structures Subject",
+		"faculty": "Faculty of Life Sciences and Technologies",
 		"methodology": "Methodology: practice-based learning with 3D simulations and real-time analysis.",
 		"creator": "Creator: Ing. Israel J. Gomez, Mgtr.",
-		"course": "For the Data Structures course.",
-		"faculty": "Faculty of Life Sciences and Technologies - ULEAM."
+		"contribution": "New version contribution: Ing. Israel J. Gomez, Mgtr.",
+		"about": "About",
+		"originalRepo": "Based on dsa-visualizer"
+	},
+	"about": {
+		"title": "About the Project",
+		"methodology": "Methodology",
+		"institution": "Institution",
+		"credits": "Credits",
+		"contribution": "Project contribution: Ing. Israel J. Gomez, Mgtr.",
+		"students": "Students of 3rd Level Parallel C Data Structures Subject & Instructor"
 	},
 	"messageQueue": {
 		"title": "Message Queue",

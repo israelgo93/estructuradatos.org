@@ -292,11 +292,22 @@
 		"ctaButton": "Empezar ahora"
 	},
 	"footer": {
-		"educationalProject": "Proyecto educativo.",
+		"educationalProject": "Proyecto educativo",
+		"course": "Asignatura Estructura de datos",
+		"faculty": "Facultad de Ciencias de la Vida y Tecnologías",
 		"methodology": "Metodología: aprendizaje basado en práctica con simulaciones 3D y análisis en tiempo real.",
 		"creator": "Creador: Ing. Israel J. Gomez, Mgtr.",
-		"course": "Para la materia de Estructura de Datos.",
-		"faculty": "Facultad de Ciencias de la Vida y Tecnologías - ULEAM."
+		"contribution": "Contribución nueva versión: Ing. Israel J. Gomez, Mgtr.",
+		"about": "Acerca de",
+		"originalRepo": "Basado en dsa-visualizer"
+	},
+	"about": {
+		"title": "Acerca del Proyecto",
+		"methodology": "Metodología",
+		"institution": "Institución",
+		"credits": "Créditos",
+		"contribution": "Contribución al proyecto: Ing. Israel J. Gomez, Mgtr.",
+		"students": "Estudiantes del 3 Nivel Paralelo C Asignatura Estructura de Datos & Docente"
 	},
 	"messageQueue": {
 		"title": "Cola de Mensajes",

@@ -7,15 +7,17 @@ const Features = dynamicImport(() => import("@/components/landing/features").the
 const TechStack = dynamicImport(() => import("@/components/landing/tech-stack").then(mod => ({ default: mod.TechStack })), { ssr: false })
 const CTA = dynamicImport(() => import("@/components/landing/cta").then(mod => ({ default: mod.CTA })), { ssr: false })
 const Navbar = dynamicImport(() => import("@/components/navigation/navbar").then(mod => ({ default: mod.Navbar })), { ssr: false })
+const Footer = dynamicImport(() => import("@/components/global/footer").then(mod => ({ default: mod.Footer })), { ssr: false })
 
 export default function Home() {
-  return (
-    <div className="flex flex-col min-h-screen p-4 sm:p-10">
-      <Navbar />
-      <Hero />
-      <Features />
-      <TechStack />
-      <CTA />
-    </div>
-  )
+	return (
+		<div className="flex flex-col min-h-screen p-4 sm:p-10">
+			<Navbar />
+			<Hero />
+			<Features />
+			<TechStack />
+			<CTA />
+			<Footer />
+		</div>
+	)
 }
