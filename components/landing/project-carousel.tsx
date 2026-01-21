@@ -4,16 +4,55 @@ import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight, Layers, List, Network, Database, GitBranch, Binary } from "lucide-react"
+import { ChevronLeft, ChevronRight, BrainCircuit, Gamepad2, ExternalLink } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 import Link from "next/link"
 
-const projects = [
-	{ id: "stack", icon: Layers, translationKey: "stack" },
-	{ id: "queue", icon: List, translationKey: "queue" },
-	{ id: "linkedList", icon: Network, translationKey: "linkedList" },
-	{ id: "binaryTree", icon: Database, translationKey: "binaryTree" },
-	{ id: "avlTree", icon: GitBranch, translationKey: "avlTree" },
-	{ id: "heap", icon: Binary, translationKey: "heap" },
+type Project = {
+	id: string
+	icon: LucideIcon
+	titleKey: string
+	descriptionKey: string
+	highlightKeys: string[]
+	primaryCtaKey: string
+	secondaryCtaKey: string
+	primaryUrl: string
+	secondaryUrl: string
+	secondaryExternal?: boolean
+}
+
+const projects: Project[] = [
+	{
+		id: "visualizer",
+		icon: BrainCircuit,
+		titleKey: "orgLanding.projectCardTitle",
+		descriptionKey: "orgLanding.projectCardDescription",
+		highlightKeys: [
+			"orgLanding.projectCardBullet1",
+			"orgLanding.projectCardBullet2",
+			"orgLanding.projectCardBullet3",
+		],
+		primaryCtaKey: "orgLanding.projectCardPrimaryCta",
+		secondaryCtaKey: "orgLanding.projectCardSecondaryCta",
+		primaryUrl: "/visualizador-es",
+		secondaryUrl: "/visualizer",
+	},
+	{
+		id: "pacman",
+		icon: Gamepad2,
+		titleKey: "orgLanding.pacmanCardTitle",
+		descriptionKey: "orgLanding.pacmanCardDescription",
+		highlightKeys: [
+			"orgLanding.pacmanCardBullet1",
+			"orgLanding.pacmanCardBullet2",
+			"orgLanding.pacmanCardBullet3",
+		],
+		primaryCtaKey: "orgLanding.pacmanCardPrimaryCta",
+		secondaryCtaKey: "orgLanding.pacmanCardSecondaryCta",
+		primaryUrl: "/pacman-es",
+		secondaryUrl: "https://github.com/israelgo93/estructuradatos.org/tree/main/pacman-es",
+		secondaryExternal: true,
+	},
 ]
 
 export function ProjectCarousel() {
@@ -47,16 +86,37 @@ export function ProjectCarousel() {
 							})()}
 						</div>
 						<h3 className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-4 tracking-tighter">
-							{t(`common.${projects[currentIndex].id}`)}
+							{t(projects[currentIndex].titleKey)}
 						</h3>
-						<p className="text-base sm:text-lg text-muted-foreground max-w-lg mb-6 sm:mb-8">
-							{t(`landing.${projects[currentIndex].id}Desc`)}
+						<p className="text-base sm:text-lg text-muted-foreground max-w-lg mb-4 sm:mb-6">
+							{t(projects[currentIndex].descriptionKey)}
 						</p>
-						<Link href="/visualizer">
-							<Button size="lg" className="rounded-full px-8 h-12 sm:h-14">
-								{t("landing.tryItOut")}
+						<ul className="text-sm sm:text-base text-muted-foreground max-w-lg mb-6 sm:mb-8 space-y-2">
+							{projects[currentIndex].highlightKeys.map((highlightKey) => (
+								<li key={highlightKey} className="flex items-start gap-2">
+									<span className="mt-1 h-1.5 w-1.5 rounded-full bg-primary/70" />
+									<span>{t(highlightKey)}</span>
+								</li>
+							))}
+						</ul>
+						<div className="flex flex-col sm:flex-row gap-3">
+							<Button size="lg" className="rounded-full px-8 h-12 sm:h-14" asChild>
+								<Link href={projects[currentIndex].primaryUrl}>
+									{t(projects[currentIndex].primaryCtaKey)}
+								</Link>
 							</Button>
-						</Link>
+							<Button size="lg" variant="outline" className="rounded-full px-8 h-12 sm:h-14" asChild>
+								<Link
+									href={projects[currentIndex].secondaryUrl}
+									target={projects[currentIndex].secondaryExternal ? "_blank" : undefined}
+									rel={projects[currentIndex].secondaryExternal ? "noopener noreferrer" : undefined}
+									className="gap-2"
+								>
+									{t(projects[currentIndex].secondaryCtaKey)}
+									{projects[currentIndex].secondaryExternal ? <ExternalLink className="h-4 w-4" /> : null}
+								</Link>
+							</Button>
+						</div>
 					</motion.div>
 				</AnimatePresence>
 

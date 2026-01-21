@@ -1,92 +1,100 @@
-Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-https://react.dev/link/hydration-mismatch
-
-  ...
-    <AppLayout>
-      <SidebarProvider>
-        <TooltipProvider delayDuration={0}>
-          <TooltipProviderProvider scope={undefined} isOpenDelayed={true} delayDuration={0} ...>
-            <div style={{...}} className="group/side..." ref={null}>
-              <AppSidebar>
-                <Sidebar>
-                  <div ref={null} className="group peer..." data-state="expanded" data-collapsible="" ...>
-                    <div>
-                    <div className="duration-2...">
-                      <div data-sidebar="sidebar" className="flex h-ful...">
-                        <_c12>
-                          <div ref={null} data-sidebar="header" className="flex flex-...">
-                            <div className="px-6 py-4 ...">
-                              <BrainCircuit>
-                              <h1 className="text-sm font-semibold">
-+                               Visualizador de Estructuras de Datos
--                               common.title
-                        ...
-              ...
-
-    at throwOnHydrationMismatch (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:4129:11)
-    at prepareToHydrateHostInstance (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:4225:21)
-    at completeWork (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13696:15)
-    at runWithFiberInDEV (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:544:16)
-    at completeUnitOfWork (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15200:19)
-    at performUnitOfWork (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15081:11)
-    at workLoopConcurrent (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15058:9)
-    at renderRootConcurrent (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15033:15)
-    at performWorkOnRoot (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:14350:13)
-    at performWorkOnRootViaSchedulerTask (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15955:7)
-    at MessagePort.performWorkUntilDeadline (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/scheduler/cjs/scheduler.development.js:44:48)
-
-
-    Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-https://react.dev/link/hydration-mismatch
-
-  ...
-    <AppLayout>
-      <SidebarProvider>
-        <TooltipProvider delayDuration={0}>
-          <TooltipProviderProvider scope={undefined} isOpenDelayed={true} delayDuration={0} ...>
-            <div style={{...}} className="group/side..." ref={null}>
-              <AppSidebar>
-                <Sidebar>
-                  <div ref={null} className="group peer..." data-state="expanded" data-collapsible="" ...>
-                    <div>
-                    <div className="duration-2...">
-                      <div data-sidebar="sidebar" className="flex h-ful...">
-                        <_c12>
-                          <div ref={null} data-sidebar="header" className="flex flex-...">
-                            <div className="px-6 py-4 ...">
-                              <BrainCircuit>
-                              <h1 className="text-sm font-semibold">
-+                               Visualizador de Estructuras de Datos
--                               common.title
-                        ...
-              ...
-
-    at throwOnHydrationMismatch (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:4129:11)
-    at prepareToHydrateHostInstance (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:4225:21)
-    at completeWork (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13696:15)
-    at runWithFiberInDEV (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:544:16)
-    at completeUnitOfWork (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15200:19)
-    at performUnitOfWork (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15081:11)
-    at workLoopConcurrent (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15058:9)
-    at renderRootConcurrent (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15033:15)
-    at performWorkOnRoot (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:14350:13)
-    at performWorkOnRootViaSchedulerTask (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15955:7)
-    at MessagePort.performWorkUntilDeadline (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/scheduler/cjs/scheduler.development.js:44:48)
+starting build "07947ff0-39e2-473a-b918-717e72bf3c81"
+FETCHSOURCE
+From https://github.com/israelgo93/estructuradatos.org
+ * branch            e65c1374e65a140068c4221d294f767801b5ddfa -> FETCH_HEAD
+HEAD is now at e65c137 feat(pacman): RediseÃ±o visual y educativo completo de Pac-Man Data Lab
+GitCommit:
+e65c1374e65a140068c4221d294f767801b5ddfa
+BUILD
+Starting Step #0 - "Build"
+Already have image (with digest): gcr.io/cloud-builders/docker
+Sending build context to Docker daemon  20.92MB
+Step 1/14 : FROM node:20-alpine AS deps
+20-alpine: Pulling from library/node
+1074353eec0d: Already exists
+c2b4197efb6c: Pulling fs layer
+3dcec9142507: Pulling fs layer
+41b3afaea3b1: Pulling fs layer
+41b3afaea3b1: Verifying Checksum
+41b3afaea3b1: Download complete
+3dcec9142507: Verifying Checksum
+3dcec9142507: Download complete
+c2b4197efb6c: Verifying Checksum
+c2b4197efb6c: Download complete
+c2b4197efb6c: Pull complete
+3dcec9142507: Pull complete
+41b3afaea3b1: Pull complete
+Digest: sha256:3960ed74dfe320a67bf8da9555b6bade25ebda2b22b6081d2f60fd7d5d430e9c
+Status: Downloaded newer image for node:20-alpine
+ ---> 1b3a22d17cb6
+Step 2/14 : WORKDIR /app
+ ---> Running in 6536f66a95bd
+Removing intermediate container 6536f66a95bd
+ ---> e6d6ed3569ce
+Step 3/14 : COPY package.json package-lock.json* pnpm-lock.yaml* ./
+ ---> eadc10693c9c
+Step 4/14 : RUN 	if [ -f pnpm-lock.yaml ]; then 		corepack enable pnpm && pnpm install --frozen-lockfile; 	elif [ -f package-lock.json ]; then 		npm ci --legacy-peer-deps; 	else 		npm install --legacy-peer-deps; 	fi
+ ---> Running in 28da5aa1d427
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: 'camera-controls@3.1.2',
+npm warn EBADENGINE   required: { node: '>=22.0.0', npm: '>=10.5.1' },
+npm warn EBADENGINE   current: { node: 'v20.20.0', npm: '10.8.2' }
+npm warn EBADENGINE }
+npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+npm warn deprecated glob@7.1.6: Glob versions prior to v9 are no longer supported
+added 714 packages, and audited 715 packages in 30s
+248 packages are looking for funding
+  run `npm fund` for details
+8 vulnerabilities (3 low, 2 moderate, 2 high, 1 critical)
+To address issues that do not require attention, run:
+  npm audit fix
+To address all issues, run:
+  npm audit fix --force
+Run `npm audit` for details.
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 11.7.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.7.0
+npm notice To update run: npm install -g npm@11.7.0
+npm notice
+Removing intermediate container 28da5aa1d427
+ ---> a69c9990700b
+Step 5/14 : FROM node:20-alpine AS builder
+ ---> 1b3a22d17cb6
+Step 6/14 : WORKDIR /app
+ ---> Running in c5a3c30441d7
+Removing intermediate container c5a3c30441d7
+ ---> 0fd0695e4c67
+Step 7/14 : COPY --from=deps /app/node_modules ./node_modules
+ ---> 87cf382b2f65
+Step 8/14 : COPY . .
+ ---> 33666da9e44a
+Step 9/14 : RUN npm run build
+ ---> Running in d43d06c4b072
+> ds-visualizer@0.1.0 build
+> next build
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+   ▲ Next.js 15.1.2
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+Failed to compile.
+./pacman-es/services/geminiService.ts:2:29
+Type error: Cannot find module '@google/genai' or its corresponding type declarations.
+  1 |
+> 2 | import { GoogleGenAI } from "@google/genai";
+    |                             ^
+  3 |
+  4 | export async function getGameCommentary(event: string, score: number): Promise<string> {
+  5 |   try {
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 11.7.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.7.0
+npm notice To update run: npm install -g npm@11.7.0
+npm notice
+The command '/bin/sh -c npm run build' returned a non-zero code: 1
+Finished Step #0 - "Build"
+ERROR
+ERROR: build step 0 "gcr.io/cloud-builders/docker" failed: step exited with non-zero status: 1

@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Press_Start_2P } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/global/theme-provider";
 import { I18nProvider } from "@/components/global/i18n-provider";
 import { Footer } from "@/components/global/footer";
 const inter = Inter({ subsets: ['latin'] })
+const pressStart = Press_Start_2P({ subsets: ["latin"], weight: "400", variable: "--font-retro" })
 
 export const metadata: Metadata = {
   title: "estructuradatos.org",
@@ -19,7 +20,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en" suppressHydrationWarning>
-			<body className={inter.className}>
+			<body className={`${inter.className} ${pressStart.variable}`}>
 				<I18nProvider>
 					<ThemeProvider
 						attribute="class"

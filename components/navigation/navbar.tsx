@@ -49,16 +49,8 @@ export const Navbar = () => {
 				label: t('orgLanding.navOpenSource'),
 			},
 			{
-				href: "/#projects",
-				label: t('orgLanding.navProjects'),
-			},
-			{
 				href: "/#community",
 				label: t('orgLanding.navCommunity'),
-			},
-			{
-				href: "/visualizador-es",
-				label: t('orgLanding.navProjectLink'),
 			},
 		];
 
@@ -120,6 +112,11 @@ export const Navbar = () => {
 			title: t('orgLanding.projectCardTitle'),
 			description: t('orgLanding.projectCardDescription'),
 			url: "/visualizador-es"
+		},
+		{
+			title: t('orgLanding.pacmanCardTitle'),
+			description: t('orgLanding.pacmanCardDescription'),
+			url: "/pacman-es"
 		},
 	];
 
