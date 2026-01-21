@@ -17,6 +17,9 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+ARG API_KEY
+ENV NEXT_PUBLIC_API_KEY=${API_KEY}
+
 RUN npm run build
 
 FROM nginx:alpine AS runner
