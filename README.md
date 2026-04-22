@@ -153,3 +153,6 @@ Las contribuciones son bienvenidas. Abre un issue para discutir cambios mayores 
 ## Licencia
 
 MIT. Ver [LICENSE](LICENSE).
+
+<!-- Test -->
+<!-- Segunda prueba Max -->
